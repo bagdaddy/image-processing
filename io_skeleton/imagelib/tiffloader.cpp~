@@ -1,0 +1,73 @@
+#include "tiffloader.hpp"
+#include <iostream>
+
+TiffLoader::TiffLoader(std::string filename) : ImageLoader(filename){
+	// ideally throw exceptions on fail, we skip that
+	openFile();
+};
+
+TiffLoader::~TiffLoader() {};
+
+bool TiffLoader::openFile(){
+	std::cout<<"TiffLoader::OpenFile: "<<_filename<<std::endl;
+	std::string fileExt{};
+
+	if(getFileExt(fileExt) && (fileExt.compare(".tif") == 0) || (fileExt.compare(".tiff") == 0)){
+
+		std::cout<<"Opening tif: "<<_filename<<std::endl;
+		_tiff = TIFFOpen(_filename.c_str(),"r");
+
+		if(_tiff){
+			_dirCount = TIFFNumberOfDirectories(_tiff);
+			std::cout<<"Tiff DIR count: "<<_dirCount<<std::endl;
+
+			// import necessary meta data
+			std::cout<<"Tiff::openFile() - parsing metadata - TODO!"<<std::endl;
+		}
+		return true;
+	};
+
+	std::cout<<"Error loading as tif: "<<_filename<<std::endl;
+	return false;
+};
+
+void TiffLoader::printMetaData(){
+	std::cout<<"TiffLoader::printMetaData() - TODO!\n filename: "<<_filename<<std::endl;
+};
+
+Image* TiffLoader::loadImage(){
+	// yes, should ideally throw an exception on fail, we skip that.
+	if(_tiff){
+		unsigned char* imageData{nullptr};
+		if(_isStriped)
+			imageData =  loadStrips();
+		else if(_isTiled)
+			imageData = loadTiles();
+		else
+			imageData = loadScanline();
+
+		if(!imageData){
+			return nullptr;
+		}
+		// construct and return an Image!
+		// return new Image(...., imageData);
+	}
+	return nullptr;
+};
+
+unsigned char* TiffLoader::loadStrips(){
+	std::cout<<"TiffLoader::loadStrips() - TODO"<<std::endl;
+	// Check TiffReadEncodedStrip
+	return nullptr;
+};
+
+unsigned char* TiffLoader::loadTiles(){
+	std::cout<<"TiffLoader::loadTiles() - TODO"<<std::endl;
+	// Check TiffReadEncodedTile / TiffReadTile
+	return nullptr;
+};
+unsigned char* TiffLoader::loadScanline(){
+	std::cout<<"TiffLoader::loadScanline() - TODO"<<std::endl;
+	// Check TiffReadScanline
+	return nullptr;
+};
